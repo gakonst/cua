@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.10.0](https://github.com/trycua/cua/compare/cua-sdk-v0.9.0...cua-sdk-v0.10.0) (2026-10-25)
+
+
+### Features
+
+* **spaces:** link System Status from Help, Settings About and the troubleshoot guide (CUA-2228) ([#5902](https://github.com/trycua/cua/issues/5902)) ([aab2775](https://github.com/trycua/cua/commit/aab27757205bf1dba41e9ea4d91df61a22b92764))
+* **spaces:** onboarding Back on every step, and a try request per system ([#5885](https://github.com/trycua/cua/issues/5885)) ([f59e242](https://github.com/trycua/cua/commit/f59e242271cd211a24329d48bb79e05eeb89f699))
+
+
+### Bug Fixes
+
+* **cua-cli:** Cua Spaces Local's hints and errors name cua-local, not cua ([#5892](https://github.com/trycua/cua/issues/5892)) ([5309f1e](https://github.com/trycua/cua/commit/5309f1edd49be0edd06a6f0a91c5a171f3f29be2))
+* **cua-cli:** Cua Spaces uninstall leaves Cua Driver's agent entries alone (CUA-2223) ([#5891](https://github.com/trycua/cua/issues/5891)) ([d68aaf2](https://github.com/trycua/cua/commit/d68aaf216d2db09acb4c4c08aa5dd35d66591c81))
+* **cua-vmm:** count a fork's checkpoint RAM once when it is the first to map it ([#5890](https://github.com/trycua/cua/issues/5890)) ([c961059](https://github.com/trycua/cua/commit/c96105986c391a43ed07a721e12bd5a030c9c687))
+* **cua-vmm:** count a recording VM's RAM file once; say when one VM is bigger than the cap ([#5877](https://github.com/trycua/cua/issues/5877)) ([1382b4f](https://github.com/trycua/cua/commit/1382b4fecfa2263d1bef0e1522f8a888e62a2c6d))
+* **cua:** the daemon ignores caller headers from loopback clients ([#5887](https://github.com/trycua/cua/issues/5887)) ([b7d1b29](https://github.com/trycua/cua/commit/b7d1b29944aff4a20af4c3c088e3982cd2c03cd0))
+* **spaces-macos:** run cua-spacesd from Contents/Helpers so opening the app shows a window ([#5871](https://github.com/trycua/cua/issues/5871)) ([92c4cbe](https://github.com/trycua/cua/commit/92c4cbe2241190b5f5a1488ba2a94859e7e51829))
+* **spaces-macos:** uninstall-local.sh takes this Mac off the relay and Local's entries out of your coding agents (CUA-2212, CUA-2222) ([#5882](https://github.com/trycua/cua/issues/5882)) ([b43f30b](https://github.com/trycua/cua/commit/b43f30bd667ebba0c188f6cce541124c3fd5703d))
+* **spaces:** "Skip for now" sticks across launches, and Local's agent setup names are guarded (CUA-2221) ([#5889](https://github.com/trycua/cua/issues/5889)) ([59cf287](https://github.com/trycua/cua/commit/59cf2877722c49671ebf7b697cec706fa71ef00f))
+* **spaces:** Cua Spaces Local uses the bundle id com.trycua.spaces.macos.local ([#5884](https://github.com/trycua/cua/issues/5884)) ([152a565](https://github.com/trycua/cua/commit/152a5653b482cbfbd01520343d0f6243f1fca467))
+* **spaces:** dogfooding polish (welcome copy first) ([#5893](https://github.com/trycua/cua/issues/5893)) ([928fe85](https://github.com/trycua/cua/commit/928fe850d48b3a9d591ba7b18e93fd4f8db239a1))
+* **spaces:** the notch counts only running or starting Spaces and collapses at zero ([#5872](https://github.com/trycua/cua/issues/5872)) ([3a31781](https://github.com/trycua/cua/commit/3a317816793479208da4c7b138680f9a438de6d6))
+
+
+### Performance Improvements
+
+* **cua-mesh:** an offline or unresponsive computer no longer holds up the others ([#5907](https://github.com/trycua/cua/issues/5907)) ([3a4b0aa](https://github.com/trycua/cua/commit/3a4b0aa68fb9b434538961121332c446249180d9))
+
 ## [0.9.0](https://github.com/trycua/cua/compare/cua-sdk-v0.8.0...cua-sdk-v0.9.0) (2026-10-24)
 
 
