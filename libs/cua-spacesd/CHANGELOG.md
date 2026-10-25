@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.9.0](https://github.com/trycua/cua/compare/cua-spacesd-v0.8.0...cua-spacesd-v0.9.0) (2026-10-25)
+
+
+### Features
+
+* **cua-home:** CuaChannel, the names that keep Cua Spaces Local apart from stable (CUA-1776) ([#5800](https://github.com/trycua/cua/issues/5800)) ([e896967](https://github.com/trycua/cua/commit/e896967501382d6dc26ef6d96282c0f8af882648))
+* **spaces:** relay counts connection outcomes (CUA-2231) ([#5900](https://github.com/trycua/cua/issues/5900)) ([1ef93e7](https://github.com/trycua/cua/commit/1ef93e74cf6b5b76c1ac0c9a6ef30fabf8997e85))
+
+
+### Bug Fixes
+
+* **images:** claim the features cua-spacesd 0.8.0 reports on every image ([#5823](https://github.com/trycua/cua/issues/5823)) ([9fd979a](https://github.com/trycua/cua/commit/9fd979a24a6e6103b201eaf3d646d2f5c23d14ad))
+* **relay:** a temp file pending delete on Windows counts as gone in the sweep ([#5867](https://github.com/trycua/cua/issues/5867)) ([4c9a7bb](https://github.com/trycua/cua/commit/4c9a7bb8c1b76fba5ffbbdeca5326e3e257cd2f4))
+* **spaces:** dogfooding polish (welcome copy first) ([#5893](https://github.com/trycua/cua/issues/5893)) ([928fe85](https://github.com/trycua/cua/commit/928fe850d48b3a9d591ba7b18e93fd4f8db239a1))
+
 ## [0.8.0](https://github.com/trycua/cua/compare/cua-spacesd-v0.7.0...cua-spacesd-v0.8.0) (2026-10-24)
 
 
