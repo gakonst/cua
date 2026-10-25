@@ -619,6 +619,13 @@ pub(crate) fn advertised_runtime_input_schema(tool_name: &str, schema: &Value) -
             .entry("session")
             .or_insert_with(crate::tool_schema::session_schema);
     }
+    // Dispatch reads `post_action_wait` for every action that waits for the
+    // post-action window-change report (see `crate::post_action_wait`).
+    if crate::post_action_wait::accepts(tool_name) {
+        properties
+            .entry(crate::post_action_wait::POST_ACTION_WAIT_ARG)
+            .or_insert_with(crate::post_action_wait::schema);
+    }
     if !crate::action_target::supports_typed_target(tool_name) {
         return schema;
     }
@@ -686,7 +693,7 @@ fn deprecated_name_note(old: &str, new: &str) -> String {
 /// - `accessibility.tree`, `accessibility.tree.structured`,
 ///   `accessibility.tree.bounded`, `accessibility.window_state`,
 ///   `accessibility.element_tokens` (Surface 6 — tool accepts the
-///   opaque `element_token` arg)
+///   opaque `element_token` arg), `accessibility.text_selection`
 /// - `app.launch`, `app.list`, `app.kill`, `window.list`,
 ///   `window.activate`, `window.frame.set`, `window.debug_info`
 /// - `system.permissions.tcc`,
@@ -760,6 +767,11 @@ pub fn default_capabilities_for(tool_name: &str) -> Vec<String> {
             // typing surface, even though the implementation skips
             // per-key events.
             "input.keyboard.type",
+            "accessibility.element_tokens",
+        ],
+        // Moves an element's text selection or caret; never edits text.
+        "select_text" => &[
+            "accessibility.text_selection",
             "accessibility.element_tokens",
         ],
 
@@ -1697,10 +1709,22 @@ impl ToolRegistry {
             .and_then(Value::as_str)
             .map(str::to_owned);
         let in_batch = crate::step_pacing::in_batch();
-        let mut result = self
-            .invoke_authorized_unannotated(name, args, context, evidence)
-            .await;
         let tool = renamed_tool(name).unwrap_or(name);
+        let post_action_wait = if crate::post_action_wait::accepts(tool) {
+            match crate::post_action_wait::from_args(tool, &args) {
+                Ok(wait) => wait,
+                Err((message, structured)) => {
+                    return ToolResult::error(message).with_structured(structured);
+                }
+            }
+        } else {
+            crate::post_action_wait::PostActionWait::Default
+        };
+        let mut result = crate::post_action_wait::scope(
+            post_action_wait,
+            self.invoke_authorized_unannotated(name, args, context, evidence),
+        )
+        .await;
         crate::recovery_hint::annotate(tool, &seed, &mut result);
         crate::batch_nudge::annotate(tool, session.as_deref(), in_batch, &mut result);
         result
@@ -3365,6 +3389,7 @@ fn is_physical_desktop_action(tool: &str) -> bool {
             | "press_key"
             | "hotkey"
             | "set_value"
+            | "select_text"
             | "bring_to_front"
             | "set_window_frame"
     )
@@ -6412,6 +6437,7 @@ mod capability_tests {
         "press_key",
         "hotkey",
         "set_value",
+        "select_text",
         // screen
         "zoom",
         "get_screen_size",
@@ -6509,6 +6535,7 @@ mod capability_tests {
         // Surface 6 — claimed by tools that accept the opaque
         // `element_token` arg + get_window_state which emits them.
         "accessibility.element_tokens",
+        "accessibility.text_selection",
         // app / window
         "app.launch",
         "app.list",
@@ -6708,6 +6735,7 @@ mod capability_tests {
             "type_text_chars",
             "press_key",
             "set_value",
+            "select_text",
             // get_window_state emits the tokens — same capability
             // claim, from the other side of the contract.
             "get_window_state",
