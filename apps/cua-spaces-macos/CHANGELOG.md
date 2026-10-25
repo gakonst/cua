@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.16.0](https://github.com/trycua/cua/compare/cua-spaces-v0.15.0...cua-spaces-v0.16.0) (2026-10-25)
+
+
+### Features
+
+* **spaces:** link System Status from Help, Settings About and the troubleshoot guide (CUA-2228) ([#5902](https://github.com/trycua/cua/issues/5902)) ([aab2775](https://github.com/trycua/cua/commit/aab27757205bf1dba41e9ea4d91df61a22b92764))
+* **spaces:** new app icon, the terracotta koala keycap ([#5914](https://github.com/trycua/cua/issues/5914)) ([ef78ec8](https://github.com/trycua/cua/commit/ef78ec83775111c9f9ed12dc97cb265d05919e4c))
+
+
+### Bug Fixes
+
+* **cua-cli:** Cua Spaces Local's hints and errors name cua-local, not cua ([#5892](https://github.com/trycua/cua/issues/5892)) ([5309f1e](https://github.com/trycua/cua/commit/5309f1edd49be0edd06a6f0a91c5a171f3f29be2))
+* **spaces-macos:** uninstall-local.sh also removes the Local preferences, caches and web view data (CUA-2207) ([#5880](https://github.com/trycua/cua/issues/5880)) ([929be2a](https://github.com/trycua/cua/commit/929be2a6766229fceb54686f039b90ac09d275a6))
+* **spaces-macos:** uninstall-local.sh takes this Mac off the relay and Local's entries out of your coding agents (CUA-2212, CUA-2222) ([#5882](https://github.com/trycua/cua/issues/5882)) ([b43f30b](https://github.com/trycua/cua/commit/b43f30bd667ebba0c188f6cce541124c3fd5703d))
+* **spaces:** "Skip for now" sticks across launches, and Local's agent setup names are guarded (CUA-2221) ([#5889](https://github.com/trycua/cua/issues/5889)) ([59cf287](https://github.com/trycua/cua/commit/59cf2877722c49671ebf7b697cec706fa71ef00f))
+* **spaces:** Cua Spaces Local uses the bundle id com.trycua.spaces.macos.local ([#5884](https://github.com/trycua/cua/issues/5884)) ([152a565](https://github.com/trycua/cua/commit/152a5653b482cbfbd01520343d0f6243f1fca467))
+* **spaces:** dogfooding polish (welcome copy first) ([#5893](https://github.com/trycua/cua/issues/5893)) ([928fe85](https://github.com/trycua/cua/commit/928fe850d48b3a9d591ba7b18e93fd4f8db239a1))
+* **spaces:** submit again when notarytool crashes before it returns a submission id ([#5874](https://github.com/trycua/cua/issues/5874)) ([411c273](https://github.com/trycua/cua/commit/411c273b16c38652a5ec16ec98a5c110fe70711b))
+* **spaces:** the notch counts only running or starting Spaces and collapses at zero ([#5872](https://github.com/trycua/cua/issues/5872)) ([3a31781](https://github.com/trycua/cua/commit/3a317816793479208da4c7b138680f9a438de6d6))
+
 ## [0.15.0](https://github.com/trycua/cua/compare/cua-spaces-v0.14.0...cua-spaces-v0.15.0) (2026-10-24)
 
 
