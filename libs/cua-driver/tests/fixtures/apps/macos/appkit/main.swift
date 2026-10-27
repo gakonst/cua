@@ -966,6 +966,12 @@ struct CuaAppKitHarness {
     static func main() {
         let app = NSApplication.shared
         app.setActivationPolicy(.regular)
+        if let directory = ProcessInfo.processInfo.environment["CUA_APPKIT_TEXT_SELECTION_DIR"] {
+            let fixture = TextSelectionFixture(directory: URL(fileURLWithPath: directory))
+            fixture.show()
+            withExtendedLifetime(fixture) { app.run() }
+            return
+        }
         if let directory = ProcessInfo.processInfo.environment["CUA_APPKIT_SNAPSHOT_DIR"] {
             let fixture = SnapshotPublicationFixture(directory: URL(fileURLWithPath: directory))
             fixture.show()

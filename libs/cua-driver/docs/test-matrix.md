@@ -291,3 +291,17 @@ When a new action or modality is added, update this document, the shared fixture
 oracle, the Rust test, and the OS-specific runner selection together. This is
 the cross-OS checklist that prevents a Windows-only test from being mistaken
 for cross-platform coverage.
+
+### Native text selection (macOS)
+
+The AppKit `text_selection` row calls `select_text` on a retained exact-window
+element token and checks an independent fixture-owned NSTextView oracle. It
+covers UTF-16 offsets, exact selection and both caret modes, repeated-text
+disambiguation, absent text, non-text controls, stale tokens, ignored writes,
+concurrent value changes and contradictory selected-text readback. The normal
+background focus, z-order, real cursor and leaked-input oracles surround the
+row. A failed post-write check returns `selection_not_applied` with
+`effect: "unverified"`; it is not proof that no selection moved. Neither an AX
+range nor this row establishes rendered formatting or keyboard focus. Linux
+and Windows explicitly return `unsupported_platform` in the shared
+tool's hermetic tests; these rows do not establish native selection there.

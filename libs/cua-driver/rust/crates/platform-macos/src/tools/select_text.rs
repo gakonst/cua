@@ -194,23 +194,31 @@ unsafe fn select_blocking(element: AXUIElementRef, request: &Request) -> Result<
         length: located.range.length as isize,
     };
     let err = set_range_attr(element, SELECTED_RANGE, wanted);
-    let read_back = copy_range_attr(element, SELECTED_RANGE);
-    if err != kAXErrorSuccess || read_back != Some(wanted) {
-        return Err(sel::refusal(
-            sel::CODE_SELECTION_NOT_APPLIED,
-            format!(
-                "AXSelectedTextRange write returned {err}; the read-back {} does not match the requested range",
-                cf_range_json(read_back)
-            ),
-            json!({
-                "path": "ax",
-                "role": role_json,
-                "ax_error": err,
-                "requested_range": range_json(located.range),
-                "read_back_range": cf_range_json(read_back),
-                "previous_range": cf_range_json(previous),
-            }),
-        ));
+    // A range alone can echo the requested offsets while the editor changed
+    // its value during the write. Re-read the value and, where supported, the
+    // selected text too. This verifies AX state, not rendering or key focus.
+    let read_back = SelectionReadback {
+        range: copy_range_attr(element, SELECTED_RANGE),
+        value: copy_string_attr(element, "AXValue"),
+        selected_text: copy_string_attr(element, "AXSelectedText"),
+    };
+    if err != kAXErrorSuccess || !read_back.confirms(&value, wanted, located.range) {
+        let message = format!(
+            "select_text could not verify selection after the write (AX error {err}, range {}). Effects may have occurred; observe before retrying.",
+            cf_range_json(read_back.range)
+        );
+        return Err(ToolResult::error(&message).with_structured(json!({
+            "code": sel::CODE_SELECTION_NOT_APPLIED,
+            "reason": message,
+            "path": "ax",
+            "role": role_json,
+            "ax_error": err,
+            "requested_range": range_json(located.range),
+            "read_back_range": cf_range_json(read_back.range),
+            "effect": "unverified",
+            "verified": false,
+            "previous_range": cf_range_json(previous),
+        })));
     }
     let selected_text = sel::utf16_slice(&value, located.range).unwrap_or_default();
     Ok(json!({
@@ -225,4 +233,84 @@ unsafe fn select_blocking(element: AXUIElementRef, request: &Request) -> Result<
         "previous_range": cf_range_json(previous),
         "value_length": sel::utf16_len(&value),
     }))
+}
+
+/// Post-write AX evidence. Missing selected text is permitted on controls that
+/// expose only the range; a missing/changed value or conflicting text is not.
+struct SelectionReadback {
+    range: Option<CFRangeValue>,
+    value: Option<String>,
+    selected_text: Option<String>,
+}
+
+impl SelectionReadback {
+    fn confirms(&self, before: &str, wanted: CFRangeValue, range: Utf16Range) -> bool {
+        self.range == Some(wanted)
+            && self.value.as_deref() == Some(before)
+            && sel::utf16_slice(before, range).is_some_and(|expected| {
+                self.selected_text
+                    .as_deref()
+                    .is_none_or(|actual| actual == expected)
+            })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn selection_readback_requires_unchanged_value_and_consistent_text() {
+        let wanted = CFRangeValue {
+            location: 3,
+            length: 3,
+        };
+        let range = Utf16Range {
+            location: 3,
+            length: 3,
+        };
+        let mut observed = SelectionReadback {
+            range: Some(wanted),
+            value: Some("😀 cat".into()),
+            selected_text: Some("cat".into()),
+        };
+        assert!(observed.confirms("😀 cat", wanted, range));
+        observed.selected_text = None; // An AX control may omit this attribute.
+        assert!(observed.confirms("😀 cat", wanted, range));
+        observed.selected_text = Some("dog".into());
+        assert!(!observed.confirms("😀 cat", wanted, range));
+        observed.selected_text = Some("cat".into());
+        observed.value = Some("😀 dog".into()); // Same offsets, different text.
+        assert!(!observed.confirms("😀 cat", wanted, range));
+        observed.value = None;
+        assert!(!observed.confirms("😀 cat", wanted, range));
+        observed.value = Some("😀 cat".into());
+        observed.range = None;
+        assert!(!observed.confirms("😀 cat", wanted, range));
+        observed.range = Some(CFRangeValue {
+            location: 3,
+            length: 0,
+        });
+        assert!(!observed.confirms("😀 cat", wanted, range));
+    }
+
+    #[test]
+    fn caret_readback_requires_empty_selected_text_when_exposed() {
+        let wanted = CFRangeValue {
+            location: 6,
+            length: 0,
+        };
+        let range = Utf16Range {
+            location: 6,
+            length: 0,
+        };
+        let mut observed = SelectionReadback {
+            range: Some(wanted),
+            value: Some("😀 cat".into()),
+            selected_text: Some(String::new()),
+        };
+        assert!(observed.confirms("😀 cat", wanted, range));
+        observed.selected_text = Some("cat".into());
+        assert!(!observed.confirms("😀 cat", wanted, range));
+    }
 }

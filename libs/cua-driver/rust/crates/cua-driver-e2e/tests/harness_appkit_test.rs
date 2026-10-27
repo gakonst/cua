@@ -31,11 +31,14 @@ use std::time::{Duration, Instant};
 use cua_driver_testkit::ax::{element_index_by_id, element_index_containing, has_id, looks_empty};
 use cua_driver_testkit::e2e::{
     execute_case, native_background_case, native_foreground_case, native_readonly_case,
-    recording_evidence, DriverRoute, Evidence, Observation, OracleKind, RefusalCode, Targeting,
+    recording_evidence, DriverRoute, Evidence, Observation, OracleKind, Targeting,
 };
 use cua_driver_testkit::observer::{NativeObserver, ObserverBackend, TargetWindow};
 use cua_driver_testkit::sentinel::run_with_background_oracles;
 use cua_driver_testkit::{Driver, McpDriver, ToolResponse};
+
+#[path = "support/appkit_text_selection.rs"]
+mod text_selection;
 
 #[path = "support/appkit_snapshot_publication.rs"]
 mod snapshot_publication;
